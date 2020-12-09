@@ -1,14 +1,14 @@
-import express = require('express')
+import express from 'express';
 import add from './modules/add';
 // Create a new express app instance
 const app: express.Application = express()
 const PORT = 3000
 
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
-app.listen(PORT, function () {
+app.listen(PORT, () => {
     console.log(`App is listening on port ${PORT}!`)
 })
 
