@@ -1,22 +1,19 @@
 import mongoose from 'mongoose';
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/url-shortener';
 
-(async function () {
+mongoose.connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
 
-    await mongoose.connect(MONGODB_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    });
+const db = mongoose.connection
 
-    const db = mongoose.connection
+db.on('error', () => {
+    console.log('mongodb error!')
+})
 
-    db.on('error', () => {
-        console.log('mongodb error!')
-    })
+db.once('open', () => {
+    console.log('mongodb connected!')
+})
 
-    db.once('open', () => {
-        console.log('mongodb connected!')
-    })
-
-    module.exports = db
-})();
+module.exports = db

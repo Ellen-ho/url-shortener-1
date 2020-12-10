@@ -1,4 +1,5 @@
 import express from 'express'
+import path from 'path'
 import mongoose from 'mongoose'
 import Url, { IUrl } from '../../models/url'
 import generateUrl from '../../public/js/generateUrl'
@@ -8,7 +9,7 @@ const PORT = process.env.PORT ? '' : ':3000'
 
 // 進入 Index
 router.get('/', (req: express.Request, res: express.Response) => {
-    return res.render('index')
+    res.sendFile(path.join(__dirname + '/index.html'));
 })
 // 導向原先儲存的網址
 router.get('/:hash', (req: express.Request, res: express.Response) => {
