@@ -15,26 +15,51 @@
     URL Shortener
     <div id="app">
         {{ message }}
+        <form action="/"
+              method="post">
+            <input type="url"
+                   name="originUrl"
+                   v-bind="originUrl"
+                   placeholder="Please Enter URL">
+            <button @click="shortenUrl()"
+                    type="submit">Shorten</button>
+        </form>
+        shortUrl: {{shortUrl}}
     </div>
 
     <script>
         var app = new Vue({
             el: '#app',
             data: {
-                message: 'Hello Vue!'
+                message: 'Hello Vue!',
+                originUrl: '',
+                shortUrl: ''
             },
             methods: {
-                get: function () {
+                checkUrl: function () {
                     axios
-                        .get('/')
-                        .then(response => (this.info = response))
-                        .catch(function (error) { // 请求失败处理
+                        .get(`/${location.hostname}`)
+                        .then(resp => {
+                            this.info = resp
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                },
+                shortenUrl: function () {
+                    axios
+                        .post('/', { originUrl: this.originUrl })
+                        .then(resp => {
+                            this.info = resp
+                        })
+                        .catch(function (error) {
                             console.log(error);
                         });
                 }
             },
             mounted() {
-
+                // has pathname => get /:hash
+                // no pathname => go to home page with submit button
             }
         })
     </script>

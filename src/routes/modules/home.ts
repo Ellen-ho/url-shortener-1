@@ -9,7 +9,7 @@ const PORT = process.env.PORT ? '' : ':3000'
 
 // 進入 Index
 router.get('/', (req: express.Request, res: express.Response) => {
-    res.sendFile(path.join(__dirname + '/index.html'));
+    res.sendFile('index.html', { root: path.join(__dirname, '../../views') });
 })
 // 導向原先儲存的網址
 router.get('/:hash', (req: express.Request, res: express.Response) => {
@@ -17,10 +17,16 @@ router.get('/:hash', (req: express.Request, res: express.Response) => {
 
     Url.find({ shortUrlHash: hash })
         .lean()
-        .then((result) => {
+        .then((result: any) => {
             // 沒找到表示之前沒轉換過
             if (result.length === 0) {
-                return res.render('index', { error: 'The short URL does not exist!' })
+                const returnObj = {
+                    code: 0,
+                    errorMsg: 'The short URL does not exist!'
+                }
+
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify(returnObj));
             } else {
                 res.redirect(result[0].originUrl)
             }
@@ -39,7 +45,7 @@ router.post('/', (req: express.Request, res: express.Response) => {
     // 尋找是否有儲存原連結
     Url.find({ originUrl: originUrl })
         .lean()
-        .then((result) => {
+        .then((result: any) => {
             // 若沒找到就產生一組並儲存
             if (result.length === 0) {
                 // 確認短網址沒有重複
@@ -61,13 +67,25 @@ router.post('/', (req: express.Request, res: express.Response) => {
                         // 將實例存入資料庫
                         try {
                             newShortUrl.save()
-                            return res.render('index', { shortUrl })
+                            const returnObj = {
+                                code: 0,
+                                shortUrl: shortUrl
+                            }
+
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify(returnObj));
                         } catch (error) {
                             return console.log(error)
                         }
                     })
             } else {
-                return res.render('index', { shortUrl: `${originHost}/${result[0].shortUrlHash}` })
+                const returnObj = {
+                    code: 0,
+                    shortUrl: `${originHost}/${result[0].shortUrlHash}`
+                }
+
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify(returnObj));
             }
         })
         .catch((error: mongoose.Error) => console.log(error))
