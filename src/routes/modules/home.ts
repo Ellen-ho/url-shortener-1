@@ -1,9 +1,10 @@
 import express from 'express'
 import mongoose from 'mongoose'
+import Url, { IUrl } from '../../models/url'
+import generateUrl from '../../public/js/generateUrl'
 const router = express.Router()
 const PORT = process.env.PORT ? '' : ':3000'
-const generateUrl = require('../../public/javascripts/generateUrl')
-const Url = require('../../models/url')
+
 
 // 進入 Index
 router.get('/', (req: express.Request, res: express.Response) => {
@@ -27,7 +28,7 @@ router.get('/:hash', (req: express.Request, res: express.Response) => {
 })
 
 // 產生短網址
-router.post('/', (req, res) => {
+router.post('/', (req: express.Request, res: express.Response) => {
     // 從 req.body 拿出表單裡的資料
     const originUrl = req.body.originUrl.trim()
     // 輸入空格就導回首頁
@@ -43,7 +44,7 @@ router.post('/', (req, res) => {
                 // 確認短網址沒有重複
                 Url.find()
                     .lean()
-                    .then((urlList) => {
+                    .then((urlList: any) => {
                         // 產生短網址亂碼 & 確保沒有重複
                         let shortUrlHash
                         do {
@@ -57,9 +58,12 @@ router.post('/', (req, res) => {
                         })
                         const shortUrl = `${originHost}/${shortUrlHash}`
                         // 將實例存入資料庫
-                        return newShortUrl.save()
-                            .then(() => res.render('index', { shortUrl }))
-                            .catch((error) => console.log(error))
+                        try {
+                            newShortUrl.save()
+                            return res.render('index', { shortUrl })
+                        } catch (error) {
+                            return console.log(error)
+                        }
                     })
             } else {
                 return res.render('index', { shortUrl: `${originHost}/${result[0].shortUrlHash}` })
@@ -75,9 +79,4 @@ function hasDuplicatedShortUrlHash(urlList: IUrl[], urlHash: string): boolean {
         return v.shortUrlHash === urlHash
     })
     return result
-}
-
-interface IUrl {
-    originUrl: String;
-    shortUrlHash: String;
 }
