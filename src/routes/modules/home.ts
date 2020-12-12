@@ -11,6 +11,7 @@ const PORT = process.env.PORT ? '' : ':3000'
 router.get('/', (req: express.Request, res: express.Response) => {
     res.sendFile('index.html', { root: path.join(__dirname, '../../views') });
 })
+
 // 導向原先儲存的網址
 router.get('/:hash', (req: express.Request, res: express.Response) => {
     const hash = req.params.hash
@@ -21,13 +22,13 @@ router.get('/:hash', (req: express.Request, res: express.Response) => {
             // 沒找到表示之前沒轉換過
             if (result.length === 0) {
                 const returnObj = {
-                    code: 0,
+                    code: 401,
                     errorMsg: 'The short URL does not exist!'
                 }
 
                 return res.status(200).json(returnObj);
             } else {
-                res.redirect(result[0].originUrl)
+                return res.redirect(result[0].originUrl)
             }
         })
         .catch((error: mongoose.Error) => console.log(error))
