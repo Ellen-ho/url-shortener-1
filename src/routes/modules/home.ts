@@ -38,7 +38,7 @@ router.post('/', (req: express.Request, res: express.Response) => {
     // 從 req.body 拿出表單裡的資料
     const originUrl = req.body.originUrl.trim()
     // 輸入空格就導回首頁
-    if (originUrl === '') { res.redirect('/') }
+    if (originUrl === '') { return res.redirect('/') }
 
     const originHost = `${req.protocol}://${req.hostname}${PORT}`
     // 尋找是否有儲存原連結
