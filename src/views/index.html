@@ -6,21 +6,66 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
     <title>Url Shortener</title>
-    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="shortcut icon"
+          href="/favicon.ico">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css">
+    <link rel="stylesheet"
+          href="/styles/index.css">
+    <!-- development version, includes helpful console warnings -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script> -->
+    <!-- production version, optimized for size and speed -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
-    URL Shortener
     <div id="app">
-        <input type="url"
-               name="originUrl"
-               v-bind="originUrl"
-               placeholder="Please Enter URL">
-        <button v-on:click="shortenUrl()"
-                type="button">Shorten</button>
-        <div>shortUrl: {{shortUrl}}</div>
+        <div class="card">
+            <h2>URL Shortener</h2>
+            <div class="link-icon">
+                <i class="fas fa-link"></i>
+            </div>
+            <!-- Ready to convert -->
+            <div class="card-body"
+                 v-if="status === 'ready'">
+                <input type="url"
+                       name="originUrl"
+                       v-model="originUrl"
+                       placeholder="Please Enter URL">
+                <button @click="shortenUrl()"
+                        type="button">Shorten</button>
+                <!-- Error Msg-->
+                <div v-if="hasError"
+                     class="alert alert-warning">
+                    <i class="fas fa-exclamation-circle"></i> {{errorMsg}}
+                </div>
+            </div>
+            <!-- Convert Successfully-->
+            <div class="card-body"
+                 v-if="status === 'success'">
+                <h4>Success! Please use this link:</h4>
+                <a class="short-url"
+                   :href="shortUrl"
+                   target="_blank">{{shortUrl}}</a> &nbsp;
+                <button @click="copyLink()"
+                        type="button">
+                    <i class="far fa-copy before-copy"
+                       v-if="!isCopy"></i>
+                    <span v-if="isCopy">
+                        <i class="fas fa-check-circle"></i>Copied!
+                    </span>
+                </button>
+
+                <button @click="backToReady()"
+                        type="button">Shorten Other URL</button>
+            </div>
+            <!-- loading -->
+            <div class="card-body"
+                 v-if="status === 'loading'">
+                <i class="fas fa-sync fa-spin"></i> Converting URL...
+            </div>
+        </div>
     </div>
 
     <script>
@@ -28,33 +73,58 @@
             el: '#app',
             data: {
                 originUrl: '',
-                shortUrl: ''
+                shortUrl: '',
+                status: 'ready',
+                isCopy: false,
+                hasError: false,
+                errorMsg: ''
             },
             methods: {
-                checkUrl: function () {
-                    axios
-                        .get(`/${location.hostname}`)
-                        .then(resp => {
-                            this.info = resp
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                        });
+                checkUrl: async function () {
+                    try {
+                        const { data } = await axios.get(`/checkUrl/${location.hostname}`)
+                        if (data.code === 401) {
+                            this.hasError = true
+                            this.errorMsg = data.errorMsg
+                        }
+                    } catch (error) {
+                        throw new Error(error)
+                    }
                 },
-                shortenUrl: function () {
-                    axios
-                        .post('/', { originUrl: this.originUrl })
-                        .then(resp => {
-                            this.info = resp
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                        });
+                shortenUrl: async function () {
+                    try {
+                        this.status = 'loading'
+                        const { data } = await axios.post('/', { originUrl: this.originUrl })
+                        if (data.code === 0) {
+                            this.shortUrl = data.shortUrl
+                            this.status = 'success'
+                        }
+                    } catch (error) {
+                        throw new Error(error)
+                    }
+                },
+                copyLink: function () {
+                    const url = document.querySelector('.short-url').innerText;
+                    const tempInput = document.createElement('input')
+                    tempInput.type = 'text'
+                    tempInput.value = url
+                    document.body.appendChild(tempInput)
+                    tempInput.select()
+                    document.execCommand('copy')
+                    document.body.removeChild(tempInput);
+                    // UI變化
+                    this.isCopy = true
+                },
+                backToReady: function () {
+                    this.status = 'ready'
+                    this.isCopy = false
                 }
             },
             mounted() {
-                // has pathname => get /:hash
-                // no pathname => go to home page with submit button
+                const pathname = location.pathname
+                if (location.pathname !== '/') {
+                    this.checkUrl();
+                }
             }
         })
     </script>
