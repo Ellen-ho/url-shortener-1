@@ -21,12 +21,7 @@ router.get('/:hash', (req: express.Request, res: express.Response) => {
         .then((result: any) => {
             // 沒找到表示之前沒轉換過
             if (result.length === 0) {
-                const returnObj = {
-                    code: 401,
-                    errorMsg: 'The short URL does not exist!'
-                }
-
-                return res.status(200).json(returnObj);
+                return res.redirect(`/`)
             } else {
                 return res.redirect(result[0].originUrl)
             }
