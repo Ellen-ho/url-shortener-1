@@ -25,8 +25,7 @@ router.get('/:hash', (req: express.Request, res: express.Response) => {
                     errorMsg: 'The short URL does not exist!'
                 }
 
-                res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify(returnObj));
+                return res.status(200).json(returnObj);
             } else {
                 res.redirect(result[0].originUrl)
             }
@@ -72,8 +71,7 @@ router.post('/', (req: express.Request, res: express.Response) => {
                                 shortUrl: shortUrl
                             }
 
-                            res.setHeader('Content-Type', 'application/json');
-                            res.end(JSON.stringify(returnObj));
+                            return res.status(200).json(returnObj);
                         } catch (error) {
                             return console.log(error)
                         }
@@ -84,8 +82,7 @@ router.post('/', (req: express.Request, res: express.Response) => {
                     shortUrl: `${originHost}/${result[0].shortUrlHash}`
                 }
 
-                res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify(returnObj));
+                return res.status(200).json(returnObj);
             }
         })
         .catch((error: mongoose.Error) => console.log(error))

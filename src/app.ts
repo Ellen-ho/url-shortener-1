@@ -8,7 +8,8 @@ const PORT = 3000
 
 require('./config/mongoose')
 
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }))
 // setting static files
 app.use(express.static('public'))
 

@@ -14,24 +14,19 @@
 <body>
     URL Shortener
     <div id="app">
-        {{ message }}
-        <form action="/"
-              method="post">
-            <input type="url"
-                   name="originUrl"
-                   v-bind="originUrl"
-                   placeholder="Please Enter URL">
-            <button @click="shortenUrl()"
-                    type="submit">Shorten</button>
-        </form>
-        shortUrl: {{shortUrl}}
+        <input type="url"
+               name="originUrl"
+               v-bind="originUrl"
+               placeholder="Please Enter URL">
+        <button v-on:click="shortenUrl()"
+                type="button">Shorten</button>
+        <div>shortUrl: {{shortUrl}}</div>
     </div>
 
     <script>
         var app = new Vue({
             el: '#app',
             data: {
-                message: 'Hello Vue!',
                 originUrl: '',
                 shortUrl: ''
             },
