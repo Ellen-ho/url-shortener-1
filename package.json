@@ -7,6 +7,7 @@
     "start": "npm run dev-ts",
     "dev-ts": "ts-node-dev src/app.ts",
     "tslint": "tslint --project tsconfig.json",
+    "postinstall": "npm run build-ts",
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "test": "echo \"Error: no test specified\" && exit 1"
