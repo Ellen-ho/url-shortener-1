@@ -13,7 +13,7 @@
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css">
     <link rel="stylesheet"
           type="text/css"
-          href="styles/index.css">
+          href="/styles/index.css">
     <!-- development version, includes helpful console warnings -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script> -->
     <!-- production version, optimized for size and speed -->
@@ -23,7 +23,7 @@
 
 <body>
     <div id="app">
-        <div class="card">
+        <div class="card convex-shadow">
             <h2>URL Shortener</h2>
             <div class="link-icon">
                 <i class="fas fa-link"></i>
@@ -36,31 +36,39 @@
                        v-model="originUrl"
                        placeholder="Please Enter URL">
                 <button @click="shortenUrl()"
-                        type="button">Shorten</button>
+                        type="button"
+                        class="btn-primary">Shorten</button>
             </div>
             <!-- Convert Successfully-->
             <div class="card-body"
                  v-if="status === 'success'">
                 <h4>Success! Please use this link:</h4>
-                <a class="short-url"
-                   :href="shortUrl"
-                   target="_blank">{{shortUrl}}</a> &nbsp;
-                <button @click="copyLink()"
-                        type="button">
-                    <i class="far fa-copy before-copy"
-                       v-if="!isCopy"></i>
-                    <span v-if="isCopy">
-                        <i class="fas fa-check-circle"></i>Copied!
-                    </span>
-                </button>
+                <div class="link-group flat-info">
+                    <a class="short-url"
+                       :href="shortUrl"
+                       target="_blank">{{shortUrl}}</a>
+                    &nbsp;
+                    <button @click="copyLink()"
+                            type="button"
+                            class="btn-primary"
+                            :class="{'concave-shadow': isCopy}">
+                        <i class="far fa-copy before-copy"
+                           v-if="!isCopy"></i>
+                        <i class="fas fa-check-circle"
+                           v-if="isCopy"></i>
+                    </button>
+                </div>
 
                 <button @click="backToReady()"
-                        type="button">Shorten Other URL</button>
+                        type="button"
+                        class="btn-primary">Shorten Other URL</button>
             </div>
             <!-- loading -->
             <div class="card-body"
                  v-if="status === 'loading'">
-                <i class="fas fa-sync fa-spin"></i> Converting URL...
+                <div class="flat-info info loading-info">
+                    <i class="fas fa-sync fa-spin"></i> Converting URL...
+                </div>
             </div>
         </div>
     </div>
