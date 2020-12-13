@@ -11,7 +11,7 @@ require('./config/mongoose')
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }))
 // setting static files
-app.use(express.static('public'))
+app.use(express.static(__dirname + '/public'))
 
 app.use(routes)
 
