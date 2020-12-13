@@ -9,7 +9,7 @@
     "build": "npm run ts:build && npm run copy",
     "prod:serve": "node dist/app.js",
     "start": "npm run build && npm run prod:serve",
-    "copy": "copyfiles -u 2 \"./src/web/**/*.{css,html}\" \"./dist/web/\"",
+    "copy": "copyfiles -u 2 \"./src/**/*.{css,html}\" \"./dist/\"",
     "tslint": "tslint -c tslint.json -p tsconfig.json"
   },
   "repository": {
