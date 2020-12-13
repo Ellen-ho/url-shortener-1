@@ -4,7 +4,7 @@ import routes from './routes/index';
 
 // Create a new express app instance
 const app: express.Application = express()
-const PORT = 3000
+const PORT = process.env.PORT || 3000
 
 require('./config/mongoose')
 
