@@ -7,6 +7,8 @@ The server is built with Node.js and Express in Typescript and a simple frontend
 
 ## Demo
 
+![](/demo_20201215.png)
+
 Demo app on heroku
 https://url-shorten-serv.herokuapp.com/
 
